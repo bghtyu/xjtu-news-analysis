@@ -1,0 +1,21 @@
+{
+  "name": "xjtu-analysis",
+  "version": "0.0.1",
+  "description": "学校信息收集与智能推荐",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bghtyu/xjtu-news-analysis.git"
+  },
+  "author": "Walter Wang",
+  "bugs": {
+    "url": "https://github.com/bghtyu/xjtu-news-analysis/issues"
+  },
+  "dependencies": {
+    "async": "^0.9.0",
+    "request": "^2.54.0"
+  }
+}
