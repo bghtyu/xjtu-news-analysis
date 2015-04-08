@@ -3,11 +3,8 @@
  */
 
 var request = require('request');
-var debug = require('debug')('info');
 
-debug('读取教务处通知列表');
-
-function getNewsList (url, callback) {
+exports.getNewsList = function (url, callback) {
     var options = {
         url: url.hostName + url.currentPage,
         method: 'GET',
@@ -55,14 +52,14 @@ function getNewsList (url, callback) {
             callback(null, newsList);
         }
     });
-}
-
-var url = {
-    hostName: 'http://jwc.xjtu.edu.cn',
-    currentPage: '/html/tzgg/1.html'
 };
 
-getNewsList(url, function (error, newsList) {
-    if (error) console.error(error.stack);
-    console.log(newsList);
-});
+//var url = {
+//    hostName: 'http://jwc.xjtu.edu.cn',
+//    currentPage: '/html/tzgg/1.html'
+//};
+//
+//getNewsList(url, function (error, newsList) {
+//    if (error) console.error(error.stack);
+//    console.log(newsList);
+//});
