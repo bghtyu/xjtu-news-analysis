@@ -42,7 +42,7 @@ exports.getNewsList = function (url, callback) {
         if (currentPage != nextPage) {
             // 读取下一页
             url.currentPage = nextPageUrl;
-            getNewsList(url, function (error, newsList2) {
+            exports.getNewsList(url, function (error, newsList2) {
                 if (error) return callback(error);
                 // 合并结果
                 callback(null, newsList.concat(newsList2));
@@ -53,13 +53,3 @@ exports.getNewsList = function (url, callback) {
         }
     });
 };
-
-//var url = {
-//    hostName: 'http://jwc.xjtu.edu.cn',
-//    currentPage: '/html/tzgg/1.html'
-//};
-//
-//getNewsList(url, function (error, newsList) {
-//    if (error) console.error(error.stack);
-//    console.log(newsList);
-//});
