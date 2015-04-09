@@ -27,7 +27,7 @@ exports.getNewsList = function (url, callback) {
             var itemRaw = newsRaw[i].match(regItem);
             var item = {
                 title: itemRaw[2],
-                url: itemRaw[1],
+                url: url.hostName + itemRaw[1],
                 date: itemRaw[3]
             };
             newsList.push(item);
@@ -51,5 +51,38 @@ exports.getNewsList = function (url, callback) {
             // 返回结果
             callback(null, newsList);
         }
+    });
+};
+
+exports.getNewsContent = function (item, callback) {
+
+    var options = {
+        url: item.url,
+        method: 'GET',
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36',
+            'Accept-Language': 'zh-CN,zh;q=0.8'
+        }
+    };
+
+    request(options, function (error,response,body) {
+        if (error) return callback(error);
+
+        var regTitle = /<div class="detail_main_content".*?>\s*<h3>(.*?)<\/h3>\s*<h1><span>.*?<\/span>\s([^<]*)\s<span>.*?<\/span>(\d{4}-\d\d-\d\d)/i;
+        var regContent = /<div class="detail_content_display">[^<]*<\/div>\s*<div[^>]*>(.*?)<\/div>/i;
+        //var regFile = /<div\s*cmsid="09230985".*?>[^°]*?(<\/span><a[^°]*?href="([^"]*)">([^<]*)<\/a>[^°]*?<\/li>)[^°]*?<\/div>/i;
+
+        var titleRaw = body.match(regTitle);
+        if (titleRaw) {
+            item.title = titleRaw[1];
+            item.author = titleRaw[2];
+            item.date = titleRaw[3];
+        }
+        var contentRaw = body.match(regContent);
+        if (contentRaw) {
+            item.body = contentRaw[1];
+        }
+
+        callback();
     });
 };

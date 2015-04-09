@@ -4,22 +4,33 @@
 
 var async = require('async');
 var config = require('../config');
-var get = require('./get');
+var read = require('./read');
 var save = require('./save');
 
 var newsList;
 
 async.series([
 
+    // 读取新闻列表
     function (done) {
-        get.getNewsList(config.url, function(error, list) {
+        read.getNewsList(config.url, function (error, list) {
             newsList = list;
             done(error);
         });
     },
 
+    // 存储新闻列表
     function (done) {
-        save.saveArticleList(newsList, done);
+        save.saveNewsList(newsList, done);
+    },
+
+    // 读取新闻内容并存入数据库
+    function (done) {
+        async.each(newsList, function (item, next) {
+            read.getNewsContent(item, function () {
+                save.saveNewsContent(item, next);
+            });
+        }, done);
     }
 
 ], function (error) {

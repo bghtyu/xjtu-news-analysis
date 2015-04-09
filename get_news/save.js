@@ -26,7 +26,7 @@ var News = mongoose.model('News', newsSchema);
  * @param {Array} list
  * @param {Function} callback
  */
-exports.saveArticleList = function (list, callback) {
+exports.saveNewsList = function (list, callback) {
     async.eachSeries(list, function (item, next) {
 
         var listItem = new News(item);
@@ -42,6 +42,19 @@ exports.saveArticleList = function (list, callback) {
         });
 
     }, callback);
+};
+
+exports.saveNewsContent = function (item, callback) {
+    News.findOneAndUpdate({ url: item.url }, item, function(error, foundNews) {
+        if (error) return callback(error);
+
+        if (foundNews == null) {
+            var newsItem = new News(item);
+            newsItem.save(callback);
+        } else {
+            callback();
+        }
+    });
 };
 
 //vadv = {
