@@ -1,16 +1,50 @@
 <!DOCTYPE html>
 <html>
-    <head lang="en">
+    <head lang="zh-cmn-Hans" ng-app="NewsApp">
         <meta charset="UTF-8">
+        <meta name="renderer" content="webkit">
         <title>XJTU-News-Analysis</title>
+        <link rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/styles/news.css">
         <script src="/socket.io/socket.io.js"></script>
+        <script src="/components/jquery/dist/jquery.min.js"></script>
+        <script src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="/components/angular/angular.min.js"></script>
     </head>
     <body>
-        <script>
-            var socket = io.connect('/');
-            socket.on('connected', function () {
-                alert('connected to XJTU-News-Analysis');
-            });
-        </script>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">XJTU-News-Analysis</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="newsList list-group" ng-controller="NewsListCtrl">
+                <a href="#" class="list-group-item" ng-repeat="newsItem in newsList">
+                    {{newsItem}}
+                </a>
+            </div>
+        </div><!-- /.container -->
+        <!--<script>-->
+            <!--var socket = io.connect('/');-->
+            <!--socket.on('connected', function () {-->
+                <!--alert('connected to XJTU-News-Analysis');-->
+            <!--});-->
+        <!--</script>-->
     </body>
 </html>
