@@ -25,7 +25,7 @@ var segsSchema = new Schema({
     title: String,
     titleSegs: String,
     body: {type: String, default: ''},
-    bodySegs: String,
+    bodySegs: {type: String, default: ''},
     url: {type: String, index: {unique: true}}
 });
 
@@ -63,9 +63,29 @@ async.series([
                             next();
                         });
                     } else {
-                        console.log("already existed!");
                         next();
                     }
+                })
+            })
+        }, callback);
+    },
+    function (callback) {
+
+        async.eachSeries(result, function (item, next) {
+            nodejieba.cut(item.body, function (wordList) {
+                var tempSegs = {body: item.body, bodySegs: wordList, url: item.url};
+                var segs = new Segs(tempSegs);
+
+                Segs.findOneAndUpdate({url: item.url}, tempSegs, function (error, foundSegs) {
+                    if (error) {
+                        return next(error);
+                    }
+                    if (foundSegs == null) {
+                        segs.save(next);
+                    } else {
+                        next();
+                    }
+
                 })
             })
         }, callback);
