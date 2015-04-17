@@ -47,31 +47,33 @@ async.series([
         });
     },
     function (callback) {
-        var len = result.length;
-        for (var i = 0; i< len; i++) {
-            // 使用闭包传入i
-            (function(){
-                var tempResult = result[i];
-                // 结巴分词开始
-                nodejieba.cut(result[i].title, function(wordList) {
-                    var tempSegs = {title: tempResult.title, titleSegs: wordList, url: tempResult.url};
-                    var segs = new Segs(tempSegs);
 
-                    Segs.find({url: tempResult.url}, function (error, foundSegs) {
-                        // 如果找不到则存储
-                        if (!foundSegs[0]) {
-                            segs.save(function (error) {
-                                if(error){
-                                    console.error(error);
-                                }
-                            });
-                        } else {
-                            console.log("already existed!")
-                        }
-                    });
-                });
-            })(i);
-        }
-        callback(null);
+        async.eachSeries(result, function (item, next) {
+            nodejieba.cut(item.title, function (wordList) {
+                var tempSegs = {title: item.title, titleSegs: wordList, url: item.url};
+                var segs = new Segs(tempSegs);
+
+                Segs.find({url: item.url}, function (error, foundSegs) {
+                    // 如果找不到则存储
+                    if (!foundSegs[0]) {
+                        segs.save(function (error) {
+                            if(error){
+                                console.error(error);
+                            }
+                            next();
+                        });
+                    } else {
+                        console.log("already existed!");
+                        next();
+                    }
+                })
+            })
+        }, callback);
     }
-]);
+], function (error) {
+    if (error) {
+        console.log(error);
+    }
+    console.log("segment completed!");
+    process.exit(0);
+});
