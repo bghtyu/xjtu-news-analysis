@@ -57,6 +57,10 @@ exports.saveNewsContent = function (item, callback) {
     });
 };
 
+exports.disconnect = function () {
+    mongoose.disconnect();
+};
+
 //vadv = {
 //    //source: '教务处',
 //    title: 'news test!',
