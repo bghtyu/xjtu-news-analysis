@@ -72,8 +72,8 @@ async.series([
     function (callback) {
 
         async.eachSeries(result, function (item, next) {
-            nodejieba.cut(item.body, function (wordList) {
-                var tempSegs = {body: item.body, bodySegs: wordList, url: item.url};
+            nodejieba.cut(removeHTMLTag(item.body), function (wordList) {
+                var tempSegs = {body: removeHTMLTag(item.body), bodySegs: wordList, url: item.url};
                 var segs = new Segs(tempSegs);
 
                 Segs.findOneAndUpdate({url: item.url}, tempSegs, function (error, foundSegs) {
@@ -97,3 +97,14 @@ async.series([
     console.log("segment completed!");
     process.exit(0);
 });
+
+/**
+ * 去除字符串中的HTML标签和&nbsp;
+ * @param string
+ * @returns {*|string|void|XML}
+ */
+function removeHTMLTag(string) {
+    string = string.replace(/<\/?[^>]*>/g, "");
+    string=string.replace(/&nbsp;/ig,'');//去掉&nbsp;
+    return string;
+}
