@@ -57,26 +57,41 @@ async.series([
         });
     },
     function (callback) {
+        var result;
 
         async.eachSeries(result_news, function (item, next) {
-            nodejieba.cut(item.title, function (wordList) {
-                var tempSegs = {title: item.title, titleSegs: wordList, url: item.url};
-                var segs = new Segs(tempSegs);
+            async.series([
+                function (callback) {
+                    result = collegeFilter(item.title);
+                    callback(null);
+                }
+            ], function (callback) {
+                    var cutDst = result ? result.content : item.title;
+                    nodejieba.cut(cutDst, function (wordList) {
+                        for (var i = 0; i < wordList.length; i++) {
+                            wordList[i] = wordList[i].replace("\u0001", result ? result.college : '');
+                        }
 
-                Segs.find({url: item.url}, function (error, foundSegs) {
-                    // 如果找不到则存储
-                    if (!foundSegs[0]) {
-                        segs.save(function (error) {
-                            if(error){
-                                console.error(error);
+                        var tempSegs = {title: item.title, titleSegs: wordList, url: item.url};
+                        var segs = new Segs(tempSegs);
+
+                        Segs.find({url: item.url}, function (error, foundSegs) {
+                            // 如果找不到则存储
+                            if (!foundSegs[0]) {
+                                segs.save(function (error) {
+                                    if(error){
+                                        console.error(error);
+                                    }
+                                    next();
+                                });
+                            } else {
+                                next();
                             }
-                            next();
-                        });
-                    } else {
-                        next();
-                    }
-                })
-            })
+                        })
+                    })
+                }
+            );
+
         }, callback);
     },
     function (callback) {
@@ -101,12 +116,16 @@ async.series([
         }, callback);
     },
     function (callback) {
-        //console.log(titles);
         var newTitles = [];
+        // @TODO 正则表达式性能改进
         for (var i = 0; i < titles.length; i++) {
-            if (titles[i].indexOf("大学") !== -1 && titles[i].indexOf("项目") !== -1) {
-                console.log(/(美国.*大学)/.exec(titles[i]));
-                newTitles.push(titles[i]);
+            var len = result_countries.countries_zh.length;
+            for (var j = 0; j < len; j++) {
+                var string = result_countries.countries_zh[j];
+                var regexp = new RegExp(string + ".*大学");
+                if (regexp.test(titles[i])) {
+                    newTitles.push(titles[i]);
+                }
             }
         }
         console.log(newTitles);
@@ -115,7 +134,7 @@ async.series([
     }
 ], function (error) {
     if (error) {
-        console.log(error);
+        console.log("segment error : " + error);
     }
     console.log("segment completed!");
     process.exit(0);
@@ -168,3 +187,28 @@ function getCountry(path, callback) {
         callback(null);
     });
 }
+
+function collegeFilter(content) {
+    var result,
+        pattern,
+        string,
+        countries = result_countries.countries_zh;
+    var REPLACE_STRING = '\u0001';
+
+
+    var len = countries.length;
+    for (var i = 0; i < len; i++) {
+        string = countries[i];
+        pattern = new RegExp("(" + string + ".*大学)");
+        if (pattern.test(content)) {
+            result = {
+                content : content.replace(pattern, REPLACE_STRING),
+                college : pattern.exec(content)[0]
+            }
+        }
+    }
+
+
+    return result;
+}
+
