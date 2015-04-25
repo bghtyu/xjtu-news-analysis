@@ -114,24 +114,24 @@ async.series([
                 })
             })
         }, callback);
-    },
-    function (callback) {
-        var newTitles = [];
-        // @TODO 正则表达式性能改进
-        for (var i = 0; i < titles.length; i++) {
-            var len = result_countries.countries_zh.length;
-            for (var j = 0; j < len; j++) {
-                var string = result_countries.countries_zh[j];
-                var regexp = new RegExp(string + ".*大学");
-                if (regexp.test(titles[i])) {
-                    newTitles.push(titles[i]);
-                }
-            }
-        }
-        console.log(newTitles);
-        console.log("total length:" + newTitles.length);
-        callback(null);
     }
+    //,
+    //function (callback) {
+    //    var newTitles = [];
+    //    for (var i = 0; i < titles.length; i++) {
+    //        var len = result_countries.countries_zh.length;
+    //        for (var j = 0; j < len; j++) {
+    //            var string = result_countries.countries_zh[j];
+    //            var regexp = new RegExp("(" + string + ".*大学)");
+    //            if (regexp.test(titles[i] || titles[i].indexOf("韩国"))) {
+    //                newTitles.push(titles[i]);
+    //            }
+    //        }
+    //    }
+    //    console.log(newTitles);
+    //    console.log("total length:" + newTitles.length);
+    //    callback(null);
+    //}
 ], function (error) {
     if (error) {
         console.log("segment error : " + error);
@@ -193,21 +193,21 @@ function collegeFilter(content) {
         pattern,
         string,
         countries = result_countries.countries_zh;
-    var REPLACE_STRING = '\u0001';
+    var REPLACE_STRING = '\u0001'; // 替换成的字符
+    var LONGEST_COLLEGE = 15; // 最长的大学名字
 
-
+    // @TODO 正则表达式性能改进
     var len = countries.length;
     for (var i = 0; i < len; i++) {
         string = countries[i];
         pattern = new RegExp("(" + string + ".*大学)");
-        if (pattern.test(content)) {
+        if (pattern.test(content) && pattern.exec(content)[0].length < LONGEST_COLLEGE) {
             result = {
                 content : content.replace(pattern, REPLACE_STRING),
                 college : pattern.exec(content)[0]
             }
         }
     }
-
 
     return result;
 }

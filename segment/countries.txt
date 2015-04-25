@@ -103,8 +103,8 @@ Kyrgyzstan , 吉尔吉斯斯坦
 Cambodia , 柬埔塞
 Kiribati , 基里巴斯
 Comoros , 科摩罗
-Korea-North , 北朝鲜
-Korea-South , 南朝鲜
+Korea-North , 朝鲜
+Korea-South , 韩国
 Kuwait , 科威特
 Cayman Islands, 开曼群岛（英属）
 Kazakhstan , 哈萨克斯坦
