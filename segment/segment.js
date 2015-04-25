@@ -188,6 +188,11 @@ function getCountry(path, callback) {
     });
 }
 
+/**
+ * “国外大学”规则：国家名+XXX+大学，总长度小于15
+ * @param content
+ * @returns {*}
+ */
 function collegeFilter(content) {
     var result,
         pattern,
