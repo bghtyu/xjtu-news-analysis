@@ -9,7 +9,7 @@ newsApp.config(['$routeProvider',
                 templateUrl: 'pages/newsList.html',
                 controller: 'newsListCtrl'
             }).
-            when('/content', {
+            when('/content/:newsId', {
                 templateUrl: 'pages/newsContent.html',
                 controller: 'newsContentCtrl'
             }).

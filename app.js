@@ -3,6 +3,7 @@
  */
 
 var express = require('express');
+var mongoose = require('mongoose');
 var app = express();
 var port = process.env.PORT || 3000;
 
@@ -18,14 +19,46 @@ var server = app.listen(port, function() {
 
 var io = require('socket.io').listen(server);
 
-var newsList = [
-    'gvaredgvads',
-    'grvafdbvefdbvsd',
-    'myfhgjhmyfum'
-];
+var newsList = [];
 
 io.sockets.on('connection', function (socket) {
     socket.on('getNewsList', function () {
-        socket.emit('newsList', newsList)
+        getNewsList(function (newsList) {
+            socket.emit('newsList', newsList);
+        });
     });
 });
+
+// 数据库连接
+mongoose.connect('mongodb://localhost/xjtu');
+
+var Schema = mongoose.Schema;
+var newsSchema = new Schema({
+    source: { type: String, default: '' },
+    title:  String,
+    author: { type: String, default: '' },
+    body:   { type: String, default: '' },
+    url:    { type: String, index: { unique: true } },
+    date:   { type: Date, default: Date.now },
+    tags:   { type: [String], default: [] }
+});
+
+var News = mongoose.model('News', newsSchema);
+
+function getNewsList (callback) {
+    var options = {skip: 0, limit: 200, sort:{ "date":1}};
+    News.find({ }, 'title date', options, function (error, docs) {
+        if (error) return next(error);
+
+        //mongoose.disconnect();
+        callback(docs);
+    });
+}
+
+function getNewsContent (callback) {
+    News.findById(id, 'title body', function (error, docs) {
+        if (error) return next(error);
+
+        callback(docs);
+    });
+}
