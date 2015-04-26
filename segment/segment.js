@@ -36,7 +36,6 @@ var Segs = mongoose.model('Segs', segsSchema);
 
 
 var result_news;
-var titles = [];
 
 async.series([
     function(callback){
@@ -46,15 +45,13 @@ async.series([
                 done(error);
             }
             result_news = docs;
-            for (var i = 0; i < docs.length; i++) {
-                titles.push(docs[i].title);
-            }
-            callback(null, docs);
+
+            console.log("news data received!");
+
+            callback(null);
         });
     },
     function (callback) {
-        var result;
-
         async.eachSeries(result_news, function (item, next) {
             async.series([
                 function (callback) {
@@ -66,7 +63,6 @@ async.series([
                         for (var i = 0; i < wordList.length; i++) {
                             wordList[i] = wordList[i].replace("\u0001", result[0] ? result[0].college : '');
                         }
-
                         var tempSegs = {title: item.title, titleSegs: wordList, url: item.url};
                         var segs = new Segs(tempSegs);
 
@@ -87,7 +83,10 @@ async.series([
                 }
             );
 
-        }, callback);
+        }, function () {
+            console.log("cut TITLE was saved successfully!");
+            callback(null);
+        });
     },
     function (callback) {
 
@@ -106,9 +105,14 @@ async.series([
                         next();
                     }
 
-                })
+                });
             })
-        }, callback);
+        }, function () {
+
+            console.log("cut BODY was saved successfully!");
+
+            callback(null);
+        });
     }
 ], function (error) {
     if (error) {
