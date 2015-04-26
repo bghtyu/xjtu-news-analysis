@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html>
-    <head lang="zh-cmn-Hans" ng-app="newsApp">
+<html ng-app="newsApp">
+    <head lang="zh-cmn-Hans">
         <meta charset="UTF-8">
         <meta name="renderer" content="webkit">
         <title>XJTU-News-Analysis</title>
         <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="styles/news.css">
-        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-        <script type="text/javascript" src="components/jquery/dist/jquery.min.js"></script>
-        <script type="text/javascript" src="components/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="components/angular/angular.min.js"></script>
-        <!--<script src="/components/angular-route/angular-route.js"></script>-->
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="components/jquery/dist/jquery.min.js"></script>
+        <script src="components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="components/angular/angular.min.js"></script>
+        <script src="components/angular-route/angular-route.min.js"></script>
     </head>
     <body>
         <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -35,15 +35,12 @@
         </nav>
 
         <div class="container" ng-controller="newsListCtrl">
-            <div class="newsList list-group">
-                <a href="#" class="list-group-item" ng-repeat="newsItem in newsList">
-                    {{newsItem}}
-                </a>
-            </div><!-- /.newsList -->
+            <div class="row" ng-view></div>
         </div><!-- /.container -->
 
-        <script type="text/javascript" src="news.js"></script>
-        <!--<script src="/router.js"></script>-->
-        <!--<script src="/controllers/newsList.js"></script>-->
+        <script src="news.js"></script>
+        <script src="router.js"></script>
+        <script src="controllers/newsList.js"></script>
+        <script src="controllers/newsContent.js"></script>
     </body>
 </html>

@@ -25,10 +25,7 @@ var newsList = [
 ];
 
 io.sockets.on('connection', function (socket) {
-    //console.log('connection');
     socket.on('getNewsList', function () {
         socket.emit('newsList', newsList)
     });
 });
-
-//console.log('Sever is on port ' + port + '!');
