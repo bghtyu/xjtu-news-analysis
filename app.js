@@ -20,11 +20,20 @@ var server = app.listen(port, function() {
 var io = require('socket.io').listen(server);
 
 var newsList = [];
+var newsContent = {
+    title: 'frqergfwearfqe',
+    body: '35426tygrhg4w5624tgfdsg4erwt5fq4r3eetfd'
+};
 
 io.sockets.on('connection', function (socket) {
     socket.on('getNewsList', function () {
         getNewsList(function (newsList) {
             socket.emit('newsList', newsList);
+        });
+    });
+    socket.on('getNewsContent', function (newsId) {
+        getNewsContent(newsId, function (newsContent) {
+            socket.emit('newsContent', newsContent);
         });
     });
 });
@@ -46,7 +55,7 @@ var newsSchema = new Schema({
 var News = mongoose.model('News', newsSchema);
 
 function getNewsList (callback) {
-    var options = {skip: 0, limit: 200, sort:{ "date":1}};
+    var options = {skip: 0, limit: 15, sort:{ "date":-1}};
     News.find({ }, 'title date', options, function (error, docs) {
         if (error) return next(error);
 
@@ -55,8 +64,8 @@ function getNewsList (callback) {
     });
 }
 
-function getNewsContent (callback) {
-    News.findById(id, 'title body', function (error, docs) {
+function getNewsContent (newsId, callback) {
+    News.findById(newsId, 'title body', function (error, docs) {
         if (error) return next(error);
 
         callback(docs);
