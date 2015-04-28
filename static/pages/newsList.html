@@ -1,5 +1,5 @@
-<div class="newsList list-group">
+<div class="col-md-8 col-md-offset-2 list-group news">
     <a href="#/content/{{newsItem._id}}" class="list-group-item" ng-repeat="newsItem in newsList">
-        {{newsItem.title}} : {{newsItem.date}}
+        {{newsItem.title}} <span class="pull-right">{{newsItem.date}}</span>
     </a>
 </div><!-- /.newsList -->

@@ -26,11 +26,13 @@ var newsContent = {
 };
 
 io.sockets.on('connection', function (socket) {
-    socket.on('getNewsList', function () {
-        getNewsList(function (newsList) {
+
+    socket.on('getNewsList', function (listPage) {
+        getNewsList(listPage,function (newsList) {
             socket.emit('newsList', newsList);
         });
     });
+
     socket.on('getNewsContent', function (newsId) {
         getNewsContent(newsId, function (newsContent) {
             socket.emit('newsContent', newsContent);
@@ -54,8 +56,16 @@ var newsSchema = new Schema({
 
 var News = mongoose.model('News', newsSchema);
 
-function getNewsList (callback) {
-    var options = {skip: 0, limit: 15, sort:{ "date":-1}};
+function getNewsList (listPage,callback) {
+    var listSkip = 0;
+    if(listPage) {
+        var page = listPage.match(/\d+/);
+        if(page) {
+            listSkip = (parseInt(page[0])-1)*15;
+        }
+    }
+    console.log(listSkip);
+    var options = {skip: listSkip, limit: 15, sort:{ "date":-1}};
     News.find({ }, 'title date', options, function (error, docs) {
         if (error) return next(error);
 

@@ -10,3 +10,17 @@ newsApp.controller('newsContentCtrl', function($scope, $routeParams, socket) {
     });
     socket.emit('getNewsContent', $scope.newsItem.newsId);
 });
+
+newsApp.directive('newsContent', function() {
+    return {
+        restrict: 'C',
+        link: function (scope, element) {
+            scope.$watch(
+                function () { return scope.newsItem.newsId; },
+                function () {
+                    element.html(scope.newsItem.body);
+                }
+            );
+        }
+    };
+});

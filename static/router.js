@@ -5,7 +5,7 @@
 newsApp.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
-            when('/', {
+            when('/list/:listPage', {
                 templateUrl: 'pages/newsList.html',
                 controller: 'newsListCtrl'
             }).
@@ -14,7 +14,7 @@ newsApp.config(['$routeProvider',
                 controller: 'newsContentCtrl'
             }).
             otherwise({
-                redirectTo: '/'
+                redirectTo: '/list/1'
             });
     }
 ]);
