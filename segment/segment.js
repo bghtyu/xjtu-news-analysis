@@ -56,12 +56,29 @@ async.series([
             async.series([
                 function (callback) {
                     filter.collegeFilter(item.title, callback);
+                },
+                function (callback) {
+                    filter.courseFilter(item.title, callback);
                 }
             ], function (callback, result) {
-                    var cutDst = result[0] ? result[0].content : item.title;
+                    var len = result.length;
+
+                    var cutDst,
+                        replaceString,
+                        target;
+
+                    var state = 0;
+                    for (var k = 0; k < len; k ++) {
+                        if (!cutDst || cutDst == item.title) {
+                            cutDst = ((result[k] && result[k].content) ? result[k].content : item.title);
+                        }
+                        replaceString = replaceString || ((result[k] && result[k].content) ? result[k].replaceString : null);
+                        target = target || ((result[k] && result[k].content) ? result[k].target : null);
+                    }
+
                     nodejieba.cut(cutDst, function (wordList) {
                         for (var i = 0; i < wordList.length; i++) {
-                            wordList[i] = wordList[i].replace("\u0001", result[0] ? result[0].college : '');
+                            wordList[i] = wordList[i].replace(replaceString, target);
                         }
                         var tempSegs = {title: item.title, titleSegs: wordList, url: item.url};
                         var segs = new Segs(tempSegs);
