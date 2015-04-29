@@ -58,19 +58,29 @@ var News = mongoose.model('News', newsSchema);
 
 function getNewsList (listPage,callback) {
     var listSkip = 0;
-    if(listPage) {
+    var pageLimit = 15;
+    if (listPage) {
         var page = listPage.match(/\d+/);
         if(page) {
-            listSkip = (parseInt(page[0])-1)*15;
+            listSkip = (parseInt(page[0])-1)*pageLimit;
         }
     }
-    console.log(listSkip);
-    var options = {skip: listSkip, limit: 15, sort:{ "date":-1}};
-    News.find({ }, 'title date', options, function (error, docs) {
+    News.count({}, function (error, count) {
         if (error) return next(error);
+        if (listSkip >= count) {listSkip = 0;}
+        if (listSkip < 0) {listSkip = 0;}
 
-        //mongoose.disconnect();
-        callback(docs);
+        var options = {skip: listSkip, limit: pageLimit, sort:{ "date":-1}};
+        News.find({ }, 'title date', options, function (error, docs) {
+            if (error) return next(error);
+
+            var pageMax = (count%pageLimit) ? parseInt(count/pageLimit)+1 : parseInt(count/pageLimit);
+            var result = {
+                pageMax: pageMax,
+                newsList: docs
+            };
+            callback(result);
+        });
     });
 }
 

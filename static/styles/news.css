@@ -4,3 +4,7 @@ body {
 .news {
     padding: 30px 15px;
 }
+
+.news-list {
+    padding-bottom: 0;
+}
