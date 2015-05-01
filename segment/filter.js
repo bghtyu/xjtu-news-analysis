@@ -1,3 +1,13 @@
+/**
+ * 类别：
+ * \u0001 : college
+ * \u0002 : course
+ * \u0003 : time
+ * \u0004 : contest
+ * \u0005 : special
+ * \u0006 : organization
+ */
+
 var async = require("async");
 var tools = require("./tools");
 
@@ -32,16 +42,14 @@ exports.collegeFilter = function(content, callback) {
 
                 };
             }
-            //TODO:不知道为什么else不起作用
-
-            //else {
-            //    result = {
-            //        content : null,
-            //        college : null,
-            //        replaceString : REPLACE_STRING
-            //    };
-            //}
         }
+
+        result = result ? result : {
+            content : null,
+            college : null,
+            replaceString : REPLACE_STRING
+        };
+
         callback(null, result);
     });
 
@@ -79,7 +87,7 @@ exports.courseFilter = function (content, callback) {
 exports.timeFilter = function (content, callback) {
     var result,
         pattern;
-    var REPLACE_STRING = '\u0001';
+    var REPLACE_STRING = '\u0003';
     var LONGEST_TIME = 15;
 };
 

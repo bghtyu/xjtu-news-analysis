@@ -28,7 +28,8 @@ var segsSchema = new Schema({
     titleSegs: String,
     body: {type: String, default: ''},
     bodySegs: {type: String, default: ''},
-    url: {type: String, index: {unique: true}}
+    url: {type: String, index: {unique: true}},
+    tags: { type: [String], default: [] }
 });
 
 var News = mongoose.model('News', newsSchema);
@@ -61,26 +62,41 @@ async.series([
                     filter.courseFilter(item.title, callback);
                 }
             ], function (callback, result) {
-                    var len = result.length;
-
-                    var cutDst,
+                    var len,
+                        k,
+                        cutDst,
                         replaceString,
                         target;
+                    var tags = [],
+                        targets = [];
 
-                    var state = 0;
-                    for (var k = 0; k < len; k ++) {
-                        if (!cutDst || cutDst == item.title) {
-                            cutDst = ((result[k] && result[k].content) ? result[k].content : item.title);
+                    len = result.length;
+                    for (k = 0; k < len; k ++) {
+                        replaceString = result[k].content ? result[k].replaceString : null;
+                        target = result[k].content ? result[k].target : null;
+
+                        if (replaceString && target) {
+                            tags.push(replaceString); // tags中保存\u0001,\u0002等
+                            targets.push(target);
                         }
-                        replaceString = replaceString || ((result[k] && result[k].content) ? result[k].replaceString : null);
-                        target = target || ((result[k] && result[k].content) ? result[k].target : null);
                     }
 
+                    len = tags.length;
+                    cutDst = item.title;
+                    for (k = 0; k < len; k++) {
+                        cutDst = cutDst.replace(targets[k], tags[k]);
+                    }
+
+                    //console.log(cutDst);
+
                     nodejieba.cut(cutDst, function (wordList) {
-                        for (var i = 0; i < wordList.length; i++) {
-                            wordList[i] = wordList[i].replace(replaceString, target);
+                        var k;
+                        for (k = 0; k < tags.length; k++) {
+                            for (var i = 0; i < wordList.length; i++) {
+                                wordList[i] = wordList[i].replace(tags[k], targets[k]);
+                            }
                         }
-                        var tempSegs = {title: item.title, titleSegs: wordList, url: item.url};
+                        var tempSegs = {title: item.title, titleSegs: wordList, url: item.url, tags: tags};
                         var segs = new Segs(tempSegs);
 
                         Segs.find({url: item.url}, function (error, foundSegs) {
