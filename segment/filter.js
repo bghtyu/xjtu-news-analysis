@@ -1,3 +1,13 @@
+/**
+ * 类别：
+ * \u0001 : college
+ * \u0002 : course
+ * \u0003 : time
+ * \u0004 : contest
+ * \u0005 : special
+ * \u0006 : organization
+ */
+
 var async = require("async");
 var tools = require("./tools");
 
@@ -27,20 +37,58 @@ exports.collegeFilter = function(content, callback) {
             if (pattern.test(content) && pattern.exec(content)[0].length < LONGEST_COLLEGE) {
                 result = {
                     content : content.replace(pattern, REPLACE_STRING),
-                    college : pattern.exec(content)[0]
-                }
+                    target : pattern.exec(content)[1],
+                    replaceString : REPLACE_STRING
+
+                };
             }
         }
+
+        result = result ? result : {
+            content : null,
+            college : null,
+            replaceString : REPLACE_STRING
+        };
+
         callback(null, result);
     });
 
 };
 
 /**
+ * 课程名称
+ */
+exports.courseFilter = function (content, callback) {
+    var result,
+        pattern;
+    var REPLACE_STRING = '\u0002';
+    var LONGEST_COURSE = 15;
+
+    pattern = /《(.*)》/;
+    if (pattern.test(content) && pattern.exec(content)[0].length < LONGEST_COURSE) {
+        result = {
+            content : content.replace(pattern, REPLACE_STRING),
+            target : pattern.exec(content)[1],
+            replaceString : REPLACE_STRING
+        };
+    } else {
+        result = {
+            content : null,
+            target : null,
+            replaceString : REPLACE_STRING
+        }
+    }
+    callback(null, result);
+};
+
+/**
  * 学期，学年，2015级
  */
-exports.timeFilter = function () {
-
+exports.timeFilter = function (content, callback) {
+    var result,
+        pattern;
+    var REPLACE_STRING = '\u0003';
+    var LONGEST_TIME = 15;
 };
 
 /**
@@ -64,9 +112,3 @@ exports.orgFilter = function () {
     
 };
 
-/**
- * 课程名称
- */
-exports.courseFilter = function () {
-    
-};
