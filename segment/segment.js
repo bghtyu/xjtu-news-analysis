@@ -38,9 +38,27 @@ var Segs = mongoose.model('Segs', segsSchema);
 
 var result_news;
 
+var count = 0;
+
 async.series([
+    function (callback) {
+        /**
+         * Drop segs collection for TEST
+         */
+        mongoose.connection.collections['segs'].drop(function (error) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("drop segs successfully");
+                callback(null);
+            }
+        });
+        /**
+         * finish DROP
+         */
+    },
     function(callback){
-        News.find({}, "title date body url", function(error, docs){
+        News.find({}, "title date body url author", function(error, docs){
             if (error) {
                 console.log(error);
                 done(error);
@@ -55,12 +73,24 @@ async.series([
     function (callback) {
         async.eachSeries(result_news, function (item, next) {
             async.series([
-                function (callback) {
-                    filter.collegeFilter(item.title, callback);
-                },
-                function (callback) {
-                    filter.courseFilter(item.title, callback);
-                }
+                    function (callback) {
+                        filter.collegeFilter(item.title, callback);
+                    },
+                    function (callback) {
+                        filter.courseFilter(item.title, callback);
+                    },
+                    function (callback) {
+                        filter.timeFilter(item.title, callback);
+                    },
+                    function (callback) {
+                        filter.contestFilter(item.title, callback);
+                    },
+                    function (callback) {
+                        filter.specialFilter(item.title, callback);
+                    },
+                    function (callback) {
+                        filter.orgFilter(item.title, item.author, callback);
+                    }
             ], function (callback, result) {
                     var len,
                         k,
@@ -69,6 +99,12 @@ async.series([
                         target;
                     var tags = [],
                         targets = [];
+
+                    if (result[5].content) {
+                        console.log(result[5]);
+                        count++;
+                        console.log(count);
+                    }
 
                     len = result.length;
                     for (k = 0; k < len; k ++) {

@@ -20,7 +20,8 @@ var tools = require("./tools");
 exports.collegeFilter = function(content, callback) {
     var result,
         pattern,
-        string;
+        string,
+        temp;
     var REPLACE_STRING = '\u0001'; // 替换成的字符
     var LONGEST_COLLEGE = 15; // 最长的大学名字
 
@@ -29,7 +30,6 @@ exports.collegeFilter = function(content, callback) {
             tools.getCountry('countries.txt', cb);
         }
     ], function (cb, result_countries) {
-        // @TODO 正则表达式性能改进
         var len = result_countries[0].countries_zh.length;
         for (var i = 0; i < len; i++) {
             string = result_countries[0].countries_zh[i];
@@ -60,15 +60,17 @@ exports.collegeFilter = function(content, callback) {
  */
 exports.courseFilter = function (content, callback) {
     var result,
-        pattern;
+        pattern,
+        temp;
     var REPLACE_STRING = '\u0002';
     var LONGEST_COURSE = 15;
 
     pattern = /《(.*)》/;
-    if (pattern.test(content) && pattern.exec(content)[0].length < LONGEST_COURSE) {
+    temp = pattern.exec(content);
+    if (pattern.test(content) && temp[1] && temp[0].length < LONGEST_COURSE) {
         result = {
             content : content.replace(pattern, REPLACE_STRING),
-            target : pattern.exec(content)[1],
+            target : temp[1],
             replaceString : REPLACE_STRING
         };
     } else {
@@ -86,29 +88,121 @@ exports.courseFilter = function (content, callback) {
  */
 exports.timeFilter = function (content, callback) {
     var result,
-        pattern;
+        pattern,
+        temp;
     var REPLACE_STRING = '\u0003';
-    var LONGEST_TIME = 15;
+    var LONGEST_TIME = 20;
+
+    pattern = /(\d{4}.*\d{4}学年第.学期|\d{4}年\d{1,2}月\d{1,2}日|\d{4}学年|\d{4}年|\d{4}届|\d{4}级)/;
+    temp = pattern.exec(content);
+
+    if (pattern.test(content) && temp[1] && temp[0].length < LONGEST_TIME) {
+        result = {
+            content : content.replace(pattern, REPLACE_STRING),
+            target : temp[1],
+            replaceString : REPLACE_STRING
+        };
+    } else {
+        result = {
+            content : null,
+            target : null,
+            replaceString : REPLACE_STRING
+        }
+    }
+
+    callback(null, result);
 };
 
 /**
+ * TODO
  * 专业测试 & 竞赛
  */
-exports.contestFilter = function () {
+exports.contestFilter = function (content, callback) {
+    var result,
+        pattern,
+        temp;
+    var REPLACE_STRING = '\u0004';
+    var LONGEST_CONTEST = 10;
 
+    pattern = /(辅修课程)/;
+
+    temp = pattern.exec(content);
+    if (pattern.test(content) && temp[1] && temp[0].length < LONGEST_CONTEST) {
+        result = {
+            content : content.replace(pattern, REPLACE_STRING),
+            target : temp[1],
+            replaceString : REPLACE_STRING
+        };
+    } else {
+        result = {
+            content : null,
+            target : null,
+            replaceString : REPLACE_STRING
+        }
+    }
+    callback(null, result);
 };
 
 /**
+ * TODO
  * 特定词汇：小学期
  */
-exports.specialFilter = function () {
-    
+exports.specialFilter = function (content, callback) {
+    var result,
+        pattern,
+        temp;
+    var REPLACE_STRING = '\u0005';
+    var LONGEST_SPECIAL = 15;
+
+    pattern = /dfs/;
+
+    temp = pattern.exec(content);
+    if (pattern.test(content) && temp[1] && temp[0].length < LONGEST_SPECIAL) {
+        result = {
+            content : content.replace(pattern, REPLACE_STRING),
+            target : temp[1],
+            replaceString : REPLACE_STRING
+        };
+    } else {
+        result = {
+            content : null,
+            target : null,
+            replaceString : REPLACE_STRING
+        }
+    }
+    callback(null, result);
 };
 
 /**
- * 机构名称：金禾经济研究中心
+ * 机构名称：e.g.金禾经济研究中心
  */
-exports.orgFilter = function () {
-    
+exports.orgFilter = function (content, org, callback) {
+    var result,
+        pattern,
+        temp;
+    var REPLACE_STRING = '\u0006';
+    var LONGEST_ORG = 20;
+
+    if (temp = tools.getOrgAnotherName(org)) {
+        pattern = new RegExp("(" + temp + "|" + org + ")");
+    } else {
+        pattern = new RegExp("(" + org + ")");
+    }
+
+    temp = pattern.exec(content);
+    if (pattern.test(content) && temp[1] && temp[0].length < LONGEST_ORG) {
+        result = {
+            content : content.replace(pattern, REPLACE_STRING),
+            target : temp[1],
+            replaceString : REPLACE_STRING
+        };
+    } else {
+        result = {
+            content : null,
+            target : null,
+            replaceString : REPLACE_STRING
+        };
+    }
+    callback(null, result);
 };
 
