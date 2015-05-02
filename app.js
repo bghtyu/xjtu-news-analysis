@@ -19,12 +19,6 @@ var server = app.listen(port, function() {
 
 var io = require('socket.io').listen(server);
 
-var newsList = [];
-var newsContent = {
-    title: 'frqergfwearfqe',
-    body: '35426tygrhg4w5624tgfdsg4erwt5fq4r3eetfd'
-};
-
 io.sockets.on('connection', function (socket) {
 
     socket.on('getNewsList', function (listPage) {
@@ -37,6 +31,10 @@ io.sockets.on('connection', function (socket) {
         getNewsContent(newsId, function (newsContent) {
             socket.emit('newsContent', newsContent);
         });
+    });
+
+    socket.on('listRecord', function (listRecord) {
+        saveListRecord(listRecord);
     });
 });
 
@@ -66,13 +64,13 @@ function getNewsList (listPage,callback) {
         }
     }
     News.count({}, function (error, count) {
-        if (error) return next(error);
+        if (error) return error;
         if (listSkip >= count) {listSkip = 0;}
         if (listSkip < 0) {listSkip = 0;}
 
         var options = {skip: listSkip, limit: pageLimit, sort:{ "date":-1}};
         News.find({ }, 'title date', options, function (error, docs) {
-            if (error) return next(error);
+            if (error) return error;
 
             var pageMax = (count%pageLimit) ? parseInt(count/pageLimit)+1 : parseInt(count/pageLimit);
             var result = {
@@ -86,8 +84,22 @@ function getNewsList (listPage,callback) {
 
 function getNewsContent (newsId, callback) {
     News.findById(newsId, 'title body', function (error, docs) {
-        if (error) return next(error);
+        if (error) return error;
 
         callback(docs);
     });
+}
+
+var recordSchema = new Schema({
+    recordType: { type: String, default: '' },
+    userId: String,
+    time: { type: Date, default: Date.now },
+    newsId: { type: String, default: '' }
+});
+
+var Record = mongoose.model('Record', recordSchema);
+
+function saveListRecord (listRecord) {
+    var listRecordItem = new Record(listRecord);
+    listRecordItem.save();
 }
