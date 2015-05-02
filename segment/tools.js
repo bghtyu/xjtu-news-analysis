@@ -84,7 +84,6 @@ exports.getOrgAnotherName = function (originName) {
         '生命学院': '生命科学与技术学院',
         '医学部': '医学部',
         '法学院': '法学院',
-        '可持续发展学院': '2015西安交大-香港科大硕博连读双学位联合培养计划招生通知',
         '金禾中心': '金禾经济研究中心'
     };
     return dict[originName] ? dict[originName] : null;

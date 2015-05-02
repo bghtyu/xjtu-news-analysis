@@ -13,6 +13,7 @@ var tools = require("./tools");
 
 
 /**
+ * TODO 有一些分不出来e.g.韩国高丽大学、庆熙大学
  * “国外大学”规则：国家名+XXX+大学，总长度小于15
  * @param content
  * @param callback
@@ -178,6 +179,7 @@ exports.specialFilter = function (content, callback) {
 };
 
 /**
+ * TODO 有些不是各个学院发布的消息，而是教务科发布的。e.g.http://jwc.xjtu.edu.cn/html/tzgg/jwgl/ksgl/2014/02/28/d7d2e413-168e-46c7-bde5-58768b22aa9e.html
  * 机构名称：e.g.金禾经济研究中心
  */
 exports.orgFilter = function (content, org, callback) {
@@ -187,7 +189,8 @@ exports.orgFilter = function (content, org, callback) {
     var REPLACE_STRING = '\u0006';
     var LONGEST_ORG = 20;
 
-    if (temp = tools.getOrgAnotherName(org)) {
+    temp  = tools.getOrgAnotherName(org);
+    if (temp) {
         pattern = new RegExp("(" + temp + "|" + org + ")");
     } else {
         pattern = new RegExp("(" + org + ")");

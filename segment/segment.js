@@ -45,14 +45,19 @@ async.series([
         /**
          * Drop segs collection for TEST
          */
-        mongoose.connection.collections['segs'].drop(function (error) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log("drop segs successfully");
-                callback(null);
-            }
-        });
+        if (mongoose.connection.collections['segs']) {
+            mongoose.connection.collections['segs'].drop(function (error) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log("drop segs successfully");
+                    callback(null);
+                }
+            });
+        } else {
+            callback(null);
+        }
+
         /**
          * finish DROP
          */
@@ -100,10 +105,10 @@ async.series([
                     var tags = [],
                         targets = [];
 
-                    if (result[3].content) {
-                        console.log(result[3]);
-                        count++;
-                        console.log(count);
+                    if (result[5].content) {
+                        //console.log(result[5]);
+                        //count++;
+                        //console.log(count);
                     }
 
                     len = result.length;
@@ -123,8 +128,6 @@ async.series([
                         cutDst = cutDst.replace(targets[k], tags[k]);
                     }
 
-                    //console.log(cutDst);
-
                     nodejieba.cut(cutDst, function (wordList) {
                         var k;
                         for (k = 0; k < tags.length; k++) {
@@ -134,7 +137,6 @@ async.series([
                         }
                         var tempSegs = {title: item.title, titleSegs: wordList, url: item.url, tags: tags};
                         var segs = new Segs(tempSegs);
-
                         Segs.find({url: item.url}, function (error, foundSegs) {
                             // 如果找不到则存储
                             if (!foundSegs[0]) {
