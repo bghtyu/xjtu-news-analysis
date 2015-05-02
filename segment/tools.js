@@ -49,6 +49,11 @@ exports.removeHTMLTag = function (string) {
     return string;
 };
 
+/**
+ * 获得机构名称的别称
+ * @param originName
+ * @returns {*}
+ */
 exports.getOrgAnotherName = function (originName) {
     var dict = {
         //'合作与交流科': '合作与交流科',
@@ -83,4 +88,11 @@ exports.getOrgAnotherName = function (originName) {
         '金禾中心': '金禾经济研究中心'
     };
     return dict[originName] ? dict[originName] : null;
+};
+
+exports.getSpecialWord = function () {
+    return [
+        '小学期',
+        '本科毕业设计'
+    ];
 };

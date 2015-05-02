@@ -114,7 +114,6 @@ exports.timeFilter = function (content, callback) {
 };
 
 /**
- * TODO
  * 专业测试 & 竞赛
  */
 exports.contestFilter = function (content, callback) {
@@ -124,7 +123,7 @@ exports.contestFilter = function (content, callback) {
     var REPLACE_STRING = '\u0004';
     var LONGEST_CONTEST = 10;
 
-    pattern = /(辅修课程)/;
+    pattern = /(大学生.*竞赛|大学生.*比赛)/;
 
     temp = pattern.exec(content);
     if (pattern.test(content) && temp[1] && temp[0].length < LONGEST_CONTEST) {
@@ -144,8 +143,8 @@ exports.contestFilter = function (content, callback) {
 };
 
 /**
- * TODO
- * 特定词汇：小学期
+ * TODO 解决一个题目中出现多个特殊词汇
+ * 特殊词汇：小学期、本科毕业设计
  */
 exports.specialFilter = function (content, callback) {
     var result,
@@ -154,22 +153,27 @@ exports.specialFilter = function (content, callback) {
     var REPLACE_STRING = '\u0005';
     var LONGEST_SPECIAL = 15;
 
-    pattern = /dfs/;
+    var specialWords = tools.getSpecialWord();
 
-    temp = pattern.exec(content);
-    if (pattern.test(content) && temp[1] && temp[0].length < LONGEST_SPECIAL) {
-        result = {
-            content : content.replace(pattern, REPLACE_STRING),
-            target : temp[1],
-            replaceString : REPLACE_STRING
-        };
-    } else {
-        result = {
-            content : null,
-            target : null,
-            replaceString : REPLACE_STRING
+    for (var i = 0; i < specialWords.length; i++) {
+        pattern = new RegExp("(" + specialWords[i] + ")");
+        temp = pattern.exec(content);
+        if (pattern.test(content) && temp[1] && temp[0].length < LONGEST_SPECIAL) {
+            result = {
+                content : content.replace(pattern, REPLACE_STRING),
+                target : temp[1],
+                replaceString : REPLACE_STRING
+            };
+            break;
         }
     }
+
+    result = result ? result : {
+        content : null,
+        target : null,
+        replaceString : REPLACE_STRING
+    };
+
     callback(null, result);
 };
 

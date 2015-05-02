@@ -100,8 +100,8 @@ async.series([
                     var tags = [],
                         targets = [];
 
-                    if (result[5].content) {
-                        console.log(result[5]);
+                    if (result[3].content) {
+                        console.log(result[3]);
                         count++;
                         console.log(count);
                     }
