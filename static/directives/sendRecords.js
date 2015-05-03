@@ -16,7 +16,6 @@ newsApp.directive('sendRecords', function( $interval, socket ) {
                 listRecord.recordType = 'list';
                 listRecord.newsId = $scope.newsList[0]._id;
             }
-            console.log(listRecord);
             socket.emit('listRecord', listRecord);
         }, 1000);
 
