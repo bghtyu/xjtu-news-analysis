@@ -33,9 +33,10 @@ async.series([
         }, done);
     }
 
-], function (error) {
-    if (error) console.error(error);
+    ], function (error) {
+        if (error) console.error(error);
 
-    console.log('Completed!');
-    process.exit(0);
-});
+        console.log('Completed!');
+        process.exit(0);
+    }
+);
