@@ -13,6 +13,7 @@ var tools = require("./tools");
 
 
 /**
+ * TODO 有一些分不出来e.g.韩国高丽大学、庆熙大学
  * “国外大学”规则：国家名+XXX+大学，总长度小于15
  * @param content
  * @param callback
@@ -114,7 +115,6 @@ exports.timeFilter = function (content, callback) {
 };
 
 /**
- * TODO
  * 专业测试 & 竞赛
  */
 exports.contestFilter = function (content, callback) {
@@ -124,7 +124,7 @@ exports.contestFilter = function (content, callback) {
     var REPLACE_STRING = '\u0004';
     var LONGEST_CONTEST = 10;
 
-    pattern = /(辅修课程)/;
+    pattern = /(大学生.*竞赛|大学生.*比赛)/;
 
     temp = pattern.exec(content);
     if (pattern.test(content) && temp[1] && temp[0].length < LONGEST_CONTEST) {
@@ -144,8 +144,8 @@ exports.contestFilter = function (content, callback) {
 };
 
 /**
- * TODO
- * 特定词汇：小学期
+ * TODO 解决一个题目中出现多个特殊词汇
+ * 特殊词汇：小学期、本科毕业设计
  */
 exports.specialFilter = function (content, callback) {
     var result,
@@ -154,26 +154,32 @@ exports.specialFilter = function (content, callback) {
     var REPLACE_STRING = '\u0005';
     var LONGEST_SPECIAL = 15;
 
-    pattern = /dfs/;
+    var specialWords = tools.getSpecialWord();
 
-    temp = pattern.exec(content);
-    if (pattern.test(content) && temp[1] && temp[0].length < LONGEST_SPECIAL) {
-        result = {
-            content : content.replace(pattern, REPLACE_STRING),
-            target : temp[1],
-            replaceString : REPLACE_STRING
-        };
-    } else {
-        result = {
-            content : null,
-            target : null,
-            replaceString : REPLACE_STRING
+    for (var i = 0; i < specialWords.length; i++) {
+        pattern = new RegExp("(" + specialWords[i] + ")");
+        temp = pattern.exec(content);
+        if (pattern.test(content) && temp[1] && temp[0].length < LONGEST_SPECIAL) {
+            result = {
+                content : content.replace(pattern, REPLACE_STRING),
+                target : temp[1],
+                replaceString : REPLACE_STRING
+            };
+            break;
         }
     }
+
+    result = result ? result : {
+        content : null,
+        target : null,
+        replaceString : REPLACE_STRING
+    };
+
     callback(null, result);
 };
 
 /**
+ * TODO 有些不是各个学院发布的消息，而是教务科发布的。e.g.http://jwc.xjtu.edu.cn/html/tzgg/jwgl/ksgl/2014/02/28/d7d2e413-168e-46c7-bde5-58768b22aa9e.html
  * 机构名称：e.g.金禾经济研究中心
  */
 exports.orgFilter = function (content, org, callback) {
@@ -183,7 +189,8 @@ exports.orgFilter = function (content, org, callback) {
     var REPLACE_STRING = '\u0006';
     var LONGEST_ORG = 20;
 
-    if (temp = tools.getOrgAnotherName(org)) {
+    temp  = tools.getOrgAnotherName(org);
+    if (temp) {
         pattern = new RegExp("(" + temp + "|" + org + ")");
     } else {
         pattern = new RegExp("(" + org + ")");
