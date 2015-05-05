@@ -83,7 +83,7 @@ function getNewsList (listPage,callback) {
 }
 
 function getNewsContent (newsId, callback) {
-    News.findById(newsId, 'title body', function (error, docs) {
+    News.findById(newsId, 'title date source author body', function (error, docs) {
         if (error) return error;
 
         callback(docs);

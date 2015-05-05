@@ -11,7 +11,7 @@ var save = require('./save');
 var rule = new schedule.RecurrenceRule();
 var times = [];
 
-for(var i=1; i<60; i=i+1){
+for(var i=1; i<60; i=i+5){
 
     times.push(i);
 
