@@ -30,6 +30,7 @@ async.series([
             read.getNewsContent(item, function () {
                 item.source = 'jwc';
                 save.saveNewsContent(item, next);
+                console.log(item.date);
             });
         }, done);
     }

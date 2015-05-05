@@ -2,12 +2,14 @@
  * Created by walter on 15-4-1.
  */
 
+//exports.update = true;
+exports.update = false;
+
 exports.url = {
     hostName: 'http://jwc.xjtu.edu.cn',
-    currentPage: '/html/tzgg/1.html'
+    currentPage: '/html/tzgg/1.html',
+    update: exports.update
 };
-
-exports.update = true;
 
 exports.requestOptions = {
     method: 'GET',

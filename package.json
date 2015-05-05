@@ -19,7 +19,6 @@
     "cheerio": "^0.19.0",
     "express": "^4.12.3",
     "fs": "0.0.2",
-    "iconv": "^2.1.6",
     "iconv-lite": "^0.4.8",
     "mongoose": "^4.0.1",
     "nodejieba": "^0.2.10",

@@ -85,8 +85,8 @@ exports.getNewsContent = function (item, callback) {
         var $ = cheerio.load(body.toString());
 
         var temp = $('div .author').text().trim();
-        item.author = temp.match(/发布者：(.+)\s{3}发布于/)[1];
-        item.date = temp.match(/发布于(\d{4}-\d\d-\d\d \d\d:\d\d)/)[1];
+        item.author = temp.match(/发布者：(.+)\s{3}发布于/) ? temp.match(/发布者：(.+)\s{3}发布于/)[1] : '';
+        item.date = temp.match(/发布于(\d{4}-\d\d-\d\d \d\d:\d\d)/) ? temp.match(/发布于(\d{4}-\d\d-\d\d \d\d:\d\d)/)[1] : '';
 
         $body = $('div #content');
         $body.find('img').each(function (){
@@ -198,7 +198,7 @@ exports.getNewsContent_cy = function (item, callback) {
 
         var temp = $('div .content_auto').text().trim();
         item.author = $('div .content_auto a').text();
-        item.date = temp.match(/(\d{4}-\d\d-\d\d \d\d:\d\d)/)[1];
+        item.date = temp.match(/(\d{4}-\d\d-\d\d \d\d:\d\d)/) ? temp.match(/(\d{4}-\d\d-\d\d \d\d:\d\d)/)[1] : '';
 
         $body = $('div #endtext');
         $body.find('img').each(function (){

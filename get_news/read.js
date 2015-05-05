@@ -33,13 +33,15 @@ exports.getNewsList = function (url, callback) {
             newsList.push(item);
         }
 
+        console.log(newsList[0].date);5
+
         var regCurrentPage = /<li class="ecms_currentpage">(\d+)<\/li>/;
         var regNextPage = /<li class="nextpage"><a\s*href="(\/html\/tzgg\/(\d+)\.html)">\s*><\/a>\s*<\/li>/;
         var currentPage = body.toString().match(regCurrentPage)[1]; //获取当前页数
         var nextPage = body.toString().match(regNextPage)[2]; //获取下页页数
         var nextPageUrl = body.toString().match(regNextPage)[1]; //获取下页Url
 
-        if (currentPage != nextPage) {
+        if ((currentPage != nextPage) && (!url.update)) {
             // 读取下一页
             url.currentPage = nextPageUrl;
             exports.getNewsList(url, function (error, newsList2) {
