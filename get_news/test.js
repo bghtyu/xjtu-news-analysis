@@ -3,29 +3,44 @@
  */
 
 var async = require('async');
+var schedule = require('node-schedule');
 var config = require('../config');
 var read = require('./testread');
 var save = require('./save');
 
-async.series([
+var rule = new schedule.RecurrenceRule();
+var times = [];
 
-        function (complete) {
-            eieug(complete);
-        },
-        function (complete) {
-            jwc(complete);
-        },
-        function (complete) {
-            cy(complete);
+for(var i=1; i<60; i=i+1){
+
+    times.push(i);
+
+}
+
+rule.minute = times;
+
+var j = schedule.scheduleJob(rule, function(){
+    console.log('Update!', new Date());
+    async.series([
+
+            function (complete) {
+                eieug(complete);
+            },
+            function (complete) {
+                jwc(complete);
+            },
+            function (complete) {
+                cy(complete);
+            }
+
+        ], function (error) {
+            if (error) console.error(error);
+
+            console.log('All Completed!', new Date());
+            //process.exit(0);
         }
-
-    ], function (error) {
-        if (error) console.error(error);
-
-        console.log('All Completed!');
-        process.exit(0);
-    }
-);
+    );
+});
 
 function eieug (complete) {
 
@@ -153,7 +168,6 @@ function cy (complete) {
                     read.getNewsContent_cy(item, function (error, item) {
                         item.source = 'cy';
                         newsContents.push(item);
-                        console.log(item.date);
                         next();
                     });
                 }, done);
@@ -162,7 +176,6 @@ function cy (complete) {
             // 新闻内容存入数据库
             function (done) {
                 async.each(newsContents, function (item, next) {
-                    console.log('saved!');
                     save.saveNewsContent(item, next);
                 }, done);
             }
