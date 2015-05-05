@@ -7,6 +7,8 @@ exports.url = {
     currentPage: '/html/tzgg/1.html'
 };
 
+exports.update = true;
+
 exports.requestOptions = {
     method: 'GET',
     headers: {
@@ -32,6 +34,7 @@ exports.url_gjc = {
 };
 
 exports.url_cy = {
-    hostName: 'http://cy.xjtu.edu.cn/',
-    listPage: 'list.php?catid=47&page=1'
+    hostName: 'http://cy.xjtu.edu.cn',
+    listPage: 'list.php?catid=47&page=1',
+    urlReg: /(list\.php\?catid=47&page=)(\d+)/
 };
