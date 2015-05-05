@@ -13,6 +13,9 @@ async.series([
             eieug(complete);
         },
         function (complete) {
+            jwc(complete);
+        },
+        function (complete) {
             cy(complete);
         }
 
@@ -23,7 +26,6 @@ async.series([
         process.exit(0);
     }
 );
-
 
 function eieug (complete) {
 
@@ -69,6 +71,55 @@ function eieug (complete) {
             if (error) console.error(error);
 
             console.log('eieug Completed!');
+            complete(error);
+        }
+    );
+}
+
+function jwc (complete) {
+
+    var newsList;
+    var newsContents = [];
+
+    async.series([
+
+            // 读取新闻列表
+            function (done) {
+                if(config.update){
+                    read.updateNewsList_jwc(config.url_jwc, function (error, list) {
+                        newsList = list;
+                        done(error);
+                    });
+                } else {
+                    read.getNewsList_jwc(config.url_jwc, null, function (error, list) {
+                        newsList = list;
+                        done(error);
+                    });
+                }
+            },
+
+            // 读取新闻内容
+            function (done) {
+                async.each(newsList, function (item, next) {
+                    read.getNewsContent_jwc(item, function (error, item) {
+                        item.source = 'jwc';
+                        newsContents.push(item);
+                        next();
+                    });
+                }, done);
+            },
+
+            // 新闻内容存入数据库
+            function (done) {
+                async.each(newsContents, function (item, next) {
+                    save.saveNewsContent(item, next);
+                }, done);
+            }
+
+        ], function (error) {
+            if (error) console.error(error);
+
+            console.log('jwc Completed!');
             complete(error);
         }
     );

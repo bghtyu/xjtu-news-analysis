@@ -2,8 +2,8 @@
  * Created by walter on 15-4-1.
  */
 
-//exports.update = true;
-exports.update = false;
+exports.update = true;
+//exports.update = false;
 
 exports.url = {
     hostName: 'http://jwc.xjtu.edu.cn',
@@ -21,7 +21,8 @@ exports.requestOptions = {
 
 exports.url_jwc = {
     hostName: 'http://jwc.xjtu.edu.cn',
-    listPage: '/html/tzgg/1.html'
+    listPage: '/html/tzgg/1.html',
+    urlReg: /(\/html\/tzgg\/)(\d+)(\.html)/
 };
 
 exports.url_eieug = {
