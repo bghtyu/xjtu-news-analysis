@@ -28,6 +28,7 @@ async.series([
     function (done) {
         async.each(newsList, function (item, next) {
             read.getNewsContent(item, function () {
+                item.source = 'jwc';
                 save.saveNewsContent(item, next);
             });
         }, done);
