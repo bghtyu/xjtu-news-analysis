@@ -33,7 +33,7 @@ exports.getNewsList = function (url, callback) {
             newsList.push(item);
         }
 
-        console.log(newsList[0].date);5
+        console.log(newsList[0].date);
 
         var regCurrentPage = /<li class="ecms_currentpage">(\d+)<\/li>/;
         var regNextPage = /<li class="nextpage"><a\s*href="(\/html\/tzgg\/(\d+)\.html)">\s*><\/a>\s*<\/li>/;
